@@ -7,12 +7,6 @@
 
 functionselfname="$(basename "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-## Examples of filtering to get info from config files
-# sed 's/foo//g' - remove foo
-# tr -cd '[:digit:]' leave only digits
-# tr -d '=\"; ' remove selected charectors =\";
-# grep -v "foo" filter out lines that contain foo
-
 unavailable="${red}UNAVAILABLE${default}"
 zero="${red}0${default}"
 
@@ -20,11 +14,18 @@ fn_info_parms_ark(){
 	port=${port:-"0"}
 	queryport=${queryport:-"0"}
 	rconport=${rconport:-"0"}
+	rawport=$((port+1))
 	maxplayers=${maxplayers:-"0"}
 }
 
-fn_info_parms_barotrauma(){
+fn_info_parms_bt(){
 	port=${port:-"0"}
+	queryport=${queryport:-"0"}
+}
+
+fn_info_parms_bt1944(){
+	port=${port:-"0"}
+	rconport=$((port+2))
 	queryport=${queryport:-"0"}
 }
 
@@ -43,7 +44,7 @@ fn_info_parms_dst(){
 	cave=${cave:-"NOT SET"}
 }
 
-fn_info_parms_factorio(){
+fn_info_parms_fctr(){
 	port=${port:-"0"}
 	rconport=${rconport:-"0"}
 	rconpassword=${rconpassword:-"NOT SET"}
@@ -61,6 +62,7 @@ fn_info_parms_hurtworld(){
 fn_info_parms_inss(){
 	port=${port:-"0"}
 	queryport=${queryport:-"0"}
+	rconport=${rconport:-"0"}
 	servername=${servername:-"NOT SET"}
 	serverpassword=${serverpassword:-"NOT SET"}
 	defaultmap=${defaultmap:-"NOT SET"}
@@ -68,16 +70,12 @@ fn_info_parms_inss(){
 	maxplayers=${maxplayers:-"0"}
 }
 
-fn_info_parms_jk2(){
-	queryport=${port}
-}
-
 fn_info_parms_kf2(){
 	queryport=${queryport:-"0"}
 	defaultmap=${defaultmap:-"NOT SET"}
 }
 
-fn_info_parms_mordhau(){
+fn_info_parms_mh(){
 	port=${port:-"0"}
 	queryport=${queryport:-"0"}
 	beaconport=${beaconport:-"0"}
@@ -95,15 +93,15 @@ fn_info_parms_mom(){
 }
 
 fn_info_parms_mta(){
-	queryport=$((port + 123))
+	queryport=$((port+123))
 }
 
-fn_info_parms_projectzomboid(){
+fn_info_parms_pz(){
 	adminpassword=${adminpassword:-"NOT SET"}
-  queryport=${port:-"0"}
+	queryport=${port:-"0"}
 }
 
-fn_info_parms_quakeworld(){
+fn_info_parms_qw(){
 	port=${port:-"0"}
 	queryport=${port:-"0"}
 }
@@ -114,20 +112,24 @@ fn_info_parms_quake2(){
 	defaultmap=${defaultmap:-"NOT SET"}
 }
 
-fn_info_parms_realvirtuality(){
-	port=${port:-"0"}
-	queryport=$((port + 1))
+fn_info_parms_arma3(){
+	port=${port:-"2302"}
+	voiceport=${port:-"2302"}
+	queryport=$((port+1))
+	steammasterport=$((port+2))
+	voiceunusedport=$((port+3))
+	battleeyeport=$((port+4))
 }
 
-fn_info_parms_risingworld(){
+fn_info_parms_rw(){
 	servername=${servername:-"NOT SET"}
 	port=${port:-"0"}
-	httpqueryport=$((port - 1))
+	httpqueryport=$((port-1))
 }
 
 fn_info_parms_rtcw(){
 	port=${port:-"0"}
-	queryport="${port:-"0"}"
+	queryport=${port:-"0"}
 	defaultmap=${defaultmap:-"NOT SET"}
 }
 
@@ -151,33 +153,47 @@ fn_info_parms_samp(){
 	queryport=${port:-"0"}
 }
 
-fn_info_parms_sof2(){
-	port=${port:-"0"}
-	defaultmap=${defaultmap:-"NOT SET"}
-}
-
 fn_info_parms_source(){
 	defaultmap=${defaultmap:-"NOT SET"}
 	maxplayers=${maxplayers:-"0"}
 	port=${port:-"0"}
+	rconport=${port:-"0"}
 	queryport=${port:-"0"}
 	clientport=${clientport:-"0"}
+	# Steamport can be between 26901-26910 and is normaly automaticly set.
+	# Some servers might support -steamport parameter to set
+	if [ "${steamport}" == "0" ]||[ -z "${steamport}" ]; then
+		steamport="$(echo "${ssinfo}" | grep "${srcdslinuxpid}" | awk '{print $5}' | grep ":269" | cut -d ":" -f2)"
+	fi
+	steamport="${steamport:-"0"}"
 }
 
 fn_info_parms_spark(){
 	defaultmap=${defaultmap:-"NOT SET"}
 	maxplayers=${maxplayers:-"0"}
 	port=${port:-"0"}
-	queryport=$((port + 1))
+	queryport=$((port+1))
 	servername=${servername:-"NOT SET"}
 	serverpassword=${serverpassword:-"NOT SET"}
 	webadminuser=${webadminuser:-"NOT SET"}
 	webadminpass=${webadminpass:-"NOT SET"}
 	webadminport=${webadminport:-"0"}
-	mods=${mods:-"NOT SET"}
+	# Commented out as displaying not set in details parameters
+	#mods=${mods:-"NOT SET"}
 }
 
-fn_info_parms_stickybots(){
+fn_info_parms_st(){
+	port=${port:-"0"}
+	queryport=${queryport:-"0"}
+	httpport=${port:-"0"}
+	worldtype=${worldtype:-"NOT SET"}
+	autosaveinterval=${autosaveinterval:-"0"}
+	clearinterval=${clearinterval:-"0"}
+	worldname=${worldname:-"NOT SET"}
+
+}
+
+fn_info_parms_sbots(){
 	port=${port:-"0"}
 	queryport=${queryport:-"0"}
 	servername=${servername:-"NOT SET"}
@@ -192,50 +208,49 @@ fn_info_parms_sof2(){
 	defaultmap=${defaultmap:-"NOT SET"}
 }
 
-fn_info_parms_towerunite(){
+fn_info_parms_tu(){
 	port=${port:-"0"}
+	steamport=$((port+1))
 	queryport=${queryport:-"0"}
 }
 
-fn_info_parms_teeworlds(){
-  queryport=${port:-"0"}
-}
-
-fn_info_parms_pavlovvr(){
+fn_info_parms_pvr(){
 	port=${port:-"0"}
-	queryport=${queryport:-"0"}
+	port401=$((port+400))
+	queryport=${port:-"0"}
 }
 
 fn_info_parms_unreal(){
 	defaultmap=${defaultmap:-"NOT SET"}
-	queryport=$((port + 1))
+	queryport=$((port+1))
 }
 
 fn_info_parms_unreal2(){
 	defaultmap=${defaultmap:-"NOT SET"}
-	queryport=$((port + 1))
+	queryport=$((port+1))
 }
 
-fn_info_parms_unreal3(){
+fn_info_parms_ut3(){
 	port=${port:-"0"}
 	queryport=${queryport:-"0"}
 	defaultmap=${defaultmap:-"NOT SET"}
 }
 
-fn_info_parms_unturned(){
+fn_info_parms_unt(){
 	servername=${selfname:-"NOT SET"}
 	port=${port:-"0"}
-	queryport=$((port + 1))
+	queryport=$((port+1))
 }
 
 fn_info_parms_ut(){
 	port=${port:-"0"}
+	queryport=$((port+1))
 }
 
 fn_info_parms_vh(){
 	port=${port:-"0"}
 	if [ "${public}" != "0" ]; then
-		queryport=$((port + 1))
+		queryport=$((port+1))
 	else
 		querymode="1"
 	fi
@@ -257,68 +272,66 @@ fn_info_parms_queryport(){
 if [ "${shortname}" == "ark" ]; then
 	fn_info_parms_ark
 elif [ "${shortname}" == "arma3" ]; then
-	fn_info_parms_realvirtuality
+	fn_info_parms_arma3
 elif [ "${shortname}" == "bt" ]; then
-	fn_info_parms_barotrauma
+	fn_info_parms_bt
+elif [ "${shortname}" == "bt1944" ]; then
+	fn_info_parms_bt1944
 elif [ "${shortname}" == "cod" ]||[ "${shortname}" == "coduo" ]||[ "${engine}" == "iw2.0" ]||[ "${engine}" == "iw3.0" ]; then
 	fn_info_parms_cod
 elif [ "${shortname}" == "fctr" ]; then
-	fn_info_parms_factorio
+	fn_info_parms_fctr
 elif [ "${shortname}" == "inss" ]; then
 	fn_info_parms_inss
-elif [ "${shortname}" == "jk2" ]; then
-	fn_info_parms_jk2
 elif [ "${shortname}" == "kf2" ]; then
 	fn_info_parms_kf2
+elif [ "${shortname}" == "mh" ]; then
+	fn_info_parms_mh
 elif [ "${shortname}" == "mohaa" ]; then
 	fn_info_parms_mohaa
 elif [ "${shortname}" == "mom" ]; then
 	fn_info_parms_mom
-elif [ "${shortname}" == "pz" ]; then
-	fn_info_parms_projectzomboid
+elif [ "${shortname}" == "mta" ]; then
+	fn_info_parms_mta
 elif [ "${shortname}" == "pvr" ]; then
-	fn_info_parms_pavlovvr
-elif [ "${shortname}" == "qw" ]; then
-	fn_info_parms_quakeworld
+	fn_info_parms_pvr
+elif [ "${shortname}" == "pz" ]; then
+	fn_info_parms_pz
 elif [ "${shortname}" == "q2" ]||[ "${shortname}" == "q3" ]; then
 	fn_info_parms_quake2
+elif [ "${shortname}" == "qw" ]; then
+	fn_info_parms_qw
 elif [ "${shortname}" == "rtcw" ]; then
 	fn_info_parms_rtcw
 elif [ "${shortname}" == "rust" ]; then
 	fn_info_parms_rust
-elif [ "${shortname}" == "samp" ]; then
-  fn_info_parms_samp
 elif [ "${shortname}" == "rw" ]; then
-	fn_info_parms_risingworld
+	fn_info_parms_rw
+elif [ "${shortname}" == "st" ]; then
+	fn_info_parms_st
 elif [ "${shortname}" == "sof2" ]; then
 	fn_info_parms_sof2
 elif [ "${shortname}" == "sbots" ]; then
-	fn_info_parms_stickybots
+	fn_info_parms_sbots
+elif [ "${shortname}" == "tu" ]; then
+	fn_info_parms_tu
+elif [ "${shortname}" == "ut3" ]; then
+	fn_info_parms_ut3
+elif [ "${shortname}" == "unt" ]; then
+	fn_info_parms_unt
+elif [ "${shortname}" == "ut" ]; then
+	fn_info_parms_ut
+elif [ "${shortname}" == "vh" ]; then
+	fn_info_parms_vh
+elif [ "${shortname}" == "wf" ]; then
+	fn_info_parms_wf
 elif [ "${engine}" == "source" ]||[ "${engine}" == "goldsrc" ]; then
 	fn_info_parms_source
 elif [ "${engine}" == "spark" ]; then
 	fn_info_parms_spark
-elif [ "${shortname}" == "tu" ]; then
-	fn_info_parms_towerunite
-elif [ "${shortname}" == "tw" ]; then
-	fn_info_parms_teeworlds
-elif [ "${shortname}" == "vh" ]; then
-	fn_info_parms_vh
-elif [ "${shortname}" == "mh" ]; then
-	fn_info_parms_mordhau
-elif [ "${shortname}" == "mta" ]; then
-	fn_info_parms_mta
 elif [ "${engine}" == "unreal" ]||[ "${engine}" == "unreal2" ]; then
 	fn_info_parms_unreal
-elif [ "${engine}" == "unreal3" ]; then
-	fn_info_parms_unreal3
-elif [ "${shortname}" == "unt" ]; then
-	fn_info_parms_unturned
-elif [ "${shortname}" == "ut" ]; then
-	fn_info_parms_ut
-elif [ "${shortname}" == "wf" ]; then
-	fn_info_parms_wf
-# for servers that have a missing queryport from the config
-elif [ "${shortname}" == "scpsl" ]||[ "${shortname}" == "scpslsm" ]; then
+# for servers that have a missing queryport from the game config.
+elif [ "${shortname}" == "samp" ]||[ "${shortname}" == "scpsl" ]||[ "${shortname}" == "scpslsm" ]||[ "${shortname}" == "jk2" ]||[ "${shortname}" == "tw" ]; then
 	fn_info_parms_queryport
 fi
